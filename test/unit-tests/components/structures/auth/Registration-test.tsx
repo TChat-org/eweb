@@ -88,7 +88,7 @@ describe("Registration", function () {
     };
 
     const defaultHsUrl = "https://matrix.org";
-    const defaultIsUrl = "https://vector.im";
+    const defaultIsUrl = "https://sydent.echat.t1.tc";
 
     function getRawComponent(
         hsUrl = defaultHsUrl,
