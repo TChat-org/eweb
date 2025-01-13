@@ -67,6 +67,11 @@ export default class LanguageDropdown extends React.Component<IProps, IState> {
                             label: "English",
                             labelInTargetLanguage: "English",
                         },
+                        // {
+                        //     value: "vi",
+                        //     label: "Tiếng Việt",
+                        //     labelInTargetLanguage: "Tiếng Việt",
+                        // },
                     ],
                 });
             });
