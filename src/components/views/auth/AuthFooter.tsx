@@ -9,7 +9,7 @@ Please see LICENSE files in the repository root for full details.
 
 import React, { ReactElement } from "react";
 
-import SdkConfig from "../../../SdkConfig";
+// import SdkConfig from "../../../SdkConfig";
 import { _t } from "../../../languageHandler";
 
 const AuthFooter = (): ReactElement => {

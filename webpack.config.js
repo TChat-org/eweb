@@ -213,6 +213,9 @@ module.exports = (env, argv) => {
 
                 // Define a variable so the i18n stuff can load
                 "$webapp": path.resolve(__dirname, "webapp"),
+
+                // Add the alias for $(res)
+                "$(res)": path.resolve(__dirname, "res"), // Adjust this path if needed
             },
             fallback: {
                 // Mock out the NodeFS module: The opus decoder imports this wrongly.
