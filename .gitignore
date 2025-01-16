@@ -9,6 +9,7 @@
 /.npmrc
 /*.log
 package-lock.json
+yarn.lock
 .DS_Store
 electron/dist
 electron/pub
