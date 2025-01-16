@@ -24,7 +24,7 @@ describe("showIncompatibleBrowser", () => {
 
     it("should match snapshot", async () => {
         await showIncompatibleBrowser(jest.fn());
-        await screen.findByText("Element does not support this browser");
+        await screen.findByText("EChat does not support this browser");
         expect(document.getElementById("matrixchat")).toMatchSnapshot();
     });
 });

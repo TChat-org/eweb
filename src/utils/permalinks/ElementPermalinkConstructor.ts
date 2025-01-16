@@ -19,7 +19,7 @@ export default class ElementPermalinkConstructor extends PermalinkConstructor {
         this.elementUrl = elementUrl;
 
         if (!this.elementUrl.startsWith("http:") && !this.elementUrl.startsWith("https:")) {
-            throw new Error("Element prefix URL does not appear to be an HTTP(S) URL");
+            throw new Error("EChat prefix URL does not appear to be an HTTP(S) URL");
         }
     }
 

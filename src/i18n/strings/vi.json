@@ -3163,9 +3163,9 @@
     "upload_failed_title": "Không tải lên được",
     "upload_file": {
         "cancel_all_button": "Hủy bỏ tất cả",
-        "error_file_too_large": "Tệp này <b>too large</b> để tải lên. Giới hạn kích thước tệp là %(limit)s nhưng tệp này là %(sizeOfThisFile)s.",
-        "error_files_too_large": "Các tệp này <b>too large</b> quá lớn để tải lên. Giới hạn kích thước tệp là %(limit)s.",
-        "error_some_files_too_large": "Một số tệp <b> quá lớn </b> không thể tải lên được. Giới hạn kích thước tệp là %(limit)s.",
+        "error_file_too_large": "Tệp này <b>quá lớn</b> không thể tải lên được. Giới hạn kích thước tệp là %(limit)s nhưng tệp này là %(sizeOfThisFile)s.",
+        "error_files_too_large": "Các tệp này <b>quá lớn</b> không thể tải lên được. Giới hạn kích thước tệp là %(limit)s.",
+        "error_some_files_too_large": "Một số tệp <b>quá lớn</b> không thể tải lên được. Giới hạn kích thước tệp là %(limit)s.",
         "error_title": "Lỗi tải lên",
         "title": "Tải tệp lên",
         "title_progress": "Tải lên tệp (%(current)s of %(total)s)",
