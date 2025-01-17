@@ -440,25 +440,25 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
             );
         }
 
-        let permalinkButton: JSX.Element | undefined;
-        if (permalink) {
-            permalinkButton = (
-                <IconizedContextMenuOption
-                    iconClassName="mx_MessageContextMenu_iconPermalink"
-                    onClick={this.onShareClick}
-                    label={_t("action|share")}
-                    element="a"
-                    {
-                        // XXX: Typescript signature for AccessibleButton doesn't work properly for non-inputs like `a`
-                        ...{
-                            href: permalink,
-                            target: "_blank",
-                            rel: "noreferrer noopener",
-                        }
-                    }
-                />
-            );
-        }
+        // let permalinkButton: JSX.Element | undefined;
+        // if (permalink) {
+        //     permalinkButton = (
+        //         <IconizedContextMenuOption
+        //             iconClassName="mx_MessageContextMenu_iconPermalink"
+        //             onClick={this.onShareClick}
+        //             label={_t("action|share")}
+        //             element="a"
+        //             {
+        //                 // XXX: Typescript signature for AccessibleButton doesn't work properly for non-inputs like `a`
+        //                 ...{
+        //                     href: permalink,
+        //                     target: "_blank",
+        //                     rel: "noreferrer noopener",
+        //                 }
+        //             }
+        //         />
+        //     );
+        // }
 
         let endPollButton: JSX.Element | undefined;
         if (this.canEndPoll(mxEvent)) {
@@ -658,7 +658,7 @@ export default class MessageContextMenu extends React.Component<IProps, IState> 
                 {openInMapSiteButton}
                 {endPollButton}
                 {forwardButton}
-                {permalinkButton}
+                {/* {permalinkButton} */}
                 {reportEventButton}
                 {externalURLButton}
                 {jumpToRelatedEventButton}
