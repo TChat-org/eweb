@@ -67,6 +67,8 @@ const ServerPicker: React.FC<IProps> = ({ title, dialogTitle, serverConfig, onSe
         );
     }
 
+    console.log(">>>> serverConfig = ", serverConfig)
+
     let serverName: React.ReactNode = serverConfig.isNameResolvable ? serverConfig.hsName : serverConfig.hsUrl;
     if (serverConfig.hsNameIsDifferent) {
         serverName = (
@@ -91,9 +93,9 @@ const ServerPicker: React.FC<IProps> = ({ title, dialogTitle, serverConfig, onSe
                     aria-label={_t("common|help")}
                 />
             ) : null}
-            <span className="mx_ServerPicker_server" title={typeof serverName === "string" ? serverName : undefined}>
+            {/* <span className="mx_ServerPicker_server" title={typeof serverName === "string" ? serverName : undefined}>
                 {serverName}
-            </span>
+            </span> */}
             {editBtn}
             {desc}
         </div>
