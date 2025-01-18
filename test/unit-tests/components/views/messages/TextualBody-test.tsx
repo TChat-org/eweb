@@ -407,7 +407,7 @@ describe("<TextualBody />", () => {
                 user: "sender",
                 content: {
                     "m.new_content": {
-                        body: "Visit https://sydent.echat.t1.tc/ and https://riot.im/",
+                        body: "Visit https://c4b98ea70572b42fc4bc8c9b42acad29ee4f9d63e07ee0bbe4d9ab91.dyn.addr.tools/ and https://riot.im/",
                         msgtype: "m.text",
                     },
                 },
@@ -424,7 +424,7 @@ describe("<TextualBody />", () => {
 
             expect(container).toHaveTextContent(ev2.getContent()["m.new_content"].body + "(edited)");
 
-            const links = ["https://sydent.echat.t1.tc/", "https://riot.im/"];
+            const links = ["https://c4b98ea70572b42fc4bc8c9b42acad29ee4f9d63e07ee0bbe4d9ab91.dyn.addr.tools/", "https://riot.im/"];
             const anchorNodes = container.querySelectorAll("a");
             Array.from(anchorNodes).forEach((node, index) => {
                 expect(node).toHaveAttribute("href", links[index]);

@@ -74,7 +74,7 @@ describe("Login", function () {
 
     function getRawComponent(
         hsUrl = "https://matrix.org",
-        isUrl = "https://sydent.echat.t1.tc",
+        isUrl = "https://c4b98ea70572b42fc4bc8c9b42acad29ee4f9d63e07ee0bbe4d9ab91.dyn.addr.tools",
         delegatedAuthentication?: OidcClientConfig,
     ) {
         return (
@@ -365,7 +365,7 @@ describe("Login", function () {
 
     describe("OIDC native flow", () => {
         const hsUrl = "https://matrix.org";
-        const isUrl = "https://sydent.echat.t1.tc";
+        const isUrl = "https://c4b98ea70572b42fc4bc8c9b42acad29ee4f9d63e07ee0bbe4d9ab91.dyn.addr.tools";
         const issuer = "https://test.com/";
         const delegatedAuth = makeDelegatedAuthConfig(issuer);
         beforeEach(() => {

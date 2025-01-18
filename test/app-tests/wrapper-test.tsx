@@ -29,13 +29,13 @@ describe("Wrapper", () => {
     beforeEach(async () => {
         SdkConfig.reset();
         PlatformPeg.set(new WebPlatform());
-        fetchMock.get("https://echat.t1.tc/_matrix/client/versions", {
+        fetchMock.get("https://a50909d5e6d67cf0ea22ace34fa813495a1db6b2cff4cc060187eabe.dyn.addr.tools/_matrix/client/versions", {
             unstable_features: {},
             versions: SERVER_SUPPORTED_MATRIX_VERSIONS,
         });
         fetchMock.get("https://matrix.org/.well-known/matrix/client", {
             "m.homeserver": {
-                base_url: "https://echat.t1.tc",
+                base_url: "https://a50909d5e6d67cf0ea22ace34fa813495a1db6b2cff4cc060187eabe.dyn.addr.tools",
             },
         });
         fetchMock.get("/version", "1.10.13");
@@ -45,7 +45,7 @@ describe("Wrapper", () => {
         SdkConfig.put({
             default_server_config: {
                 "m.homeserver": {
-                    base_url: "https://echat.t1.tc",
+                    base_url: "https://a50909d5e6d67cf0ea22ace34fa813495a1db6b2cff4cc060187eabe.dyn.addr.tools",
                 },
             },
         });

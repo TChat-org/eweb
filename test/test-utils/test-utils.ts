@@ -273,7 +273,7 @@ export function createTestClient(): MatrixClient {
         requestMsisdnToken: jest.fn(),
         submitMsisdnToken: jest.fn(),
         getMediaConfig: jest.fn(),
-        baseUrl: "https://echat.t1.tc",
+        baseUrl: "https://a50909d5e6d67cf0ea22ace34fa813495a1db6b2cff4cc060187eabe.dyn.addr.tools",
         matrixRTC: createStubMatrixRTC(),
         isFallbackICEServerAllowed: jest.fn().mockReturnValue(false),
         getAuthIssuer: jest.fn(),

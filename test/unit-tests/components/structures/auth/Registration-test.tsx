@@ -88,7 +88,7 @@ describe("Registration", function () {
     };
 
     const defaultHsUrl = "https://matrix.org";
-    const defaultIsUrl = "https://sydent.echat.t1.tc";
+    const defaultIsUrl = "https://c4b98ea70572b42fc4bc8c9b42acad29ee4f9d63e07ee0bbe4d9ab91.dyn.addr.tools";
 
     function getRawComponent(
         hsUrl = defaultHsUrl,
