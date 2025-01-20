@@ -721,6 +721,9 @@
         "subspace_join_rule_public_description": "Anyone will be able to find and join this space, not just members of <SpaceName/>.",
         "subspace_join_rule_restricted_description": "Anyone in <SpaceName/> will be able to find and join."
     },
+    "create_temp_user": {
+        "label": "Create a temporary account"
+    },
     "credits": {
         "default_cover_photo": "The <photo>default cover photo</photo> is © <author>Jesús Roncero</author> used under the terms of <terms>CC-BY-SA 4.0</terms>.",
         "twemoji": "The <twemoji>Twemoji</twemoji> emoji art is © <author>Twitter, Inc and other contributors</author> used under the terms of <terms>CC-BY 4.0</terms>.",

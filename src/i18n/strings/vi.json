@@ -277,7 +277,7 @@
         "set_email_prompt": "Bạn có muốn đặt một địa chỉ thư điện tử không?",
         "sign_in_description": "Dùng tài khoản của bạn để tiếp tục.",
         "sign_in_instead": "Đăng nhập",
-        "sign_in_instead_prompt": "Đăng nhập",
+        "sign_in_instead_prompt": "<a>Đăng nhập</a>",
         "sign_in_or_register": "Đăng nhập hoặc Tạo tài khoản",
         "sign_in_or_register_description": "Sử dụng tài khoản của bạn hoặc tạo một tài khoản mới để tiếp tục.",
         "sign_in_prompt": "Đã có một tài khoản? <a>Sign in</a>",
@@ -631,6 +631,9 @@
         "subspace_join_rule_public_description": "Bất kỳ ai cũng có thể tìm và tham gia space này, không chỉ là thành viên của <Không gianName/>.",
         "subspace_join_rule_restricted_description": "Bất kỳ ai trong <Không gianName/> đều có thể tìm và tham gia."
     },
+    "create_temp_user": {
+        "label": "Tạo tài khoản tạm thời"
+    },
     "credits": {
         "default_cover_photo": "Các <photo>ảnh bìa mặc định</photo> Là © <author>Chúa Jesus Roncero</author> Được sử dụng theo các điều khoản của <terms>CC-BY-SA 4.0</terms>."
     },
@@ -715,7 +718,7 @@
     "emoji_picker": {
         "cancel_search_label": "Hủy tìm kiếm"
     },
-    "empty_room": "Phòng trống",
+    "empty_room": "Yêu cầu",
     "empty_room_was_name": "Phòng trống (trước kia là %(oldName)s)",
     "encryption": {
         "access_secret_storage_dialog": {

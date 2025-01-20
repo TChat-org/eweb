@@ -69,6 +69,9 @@ interface IProps {
     idSid?: string;
     fragmentAfterLogin?: string;
     mobileRegister?: boolean;
+
+    showFormOnly?: boolean;
+
     // Called when the user has logged in. Params:
     // - object with userId, deviceId, homeserverUrl, identityServerUrl, accessToken
     onLoggedIn(params: IMatrixClientCreds): Promise<void>;
@@ -97,10 +100,10 @@ interface IState {
     // the user in to their new account automatically.
     completedNoSignin: boolean;
     flows:
-        | {
-              stages: string[];
-          }[]
-        | null;
+    | {
+        stages: string[];
+    }[]
+    | null;
     // We perform liveliness checks later, but for now suppress the errors.
     // We also track the server dead errors independently of the regular errors so
     // that we can render it differently, and override any other error the user may
@@ -495,6 +498,11 @@ export default class Registration extends React.Component<IProps, IState> {
         };
         if (auth) registerParams.auth = auth;
         debuglog("Registration: sending registration request:", auth);
+        // return this.state.matrixClient.registerRequest(registerParams);
+        if (this.props.showFormOnly === true && this.state.doingUIAuth) {
+            const client = MatrixClientPeg.safeGet();
+            return client.createAccountRequest(registerParams);
+        }
         return this.state.matrixClient.registerRequest(registerParams);
     };
 
@@ -612,6 +620,7 @@ export default class Registration extends React.Component<IProps, IState> {
                         canSubmit={!this.state.serverErrorIsFatal}
                         matrixClient={this.state.matrixClient}
                         mobileRegister={this.props.mobileRegister}
+                        showFormOnly={this.props.showFormOnly}
                     />
                 </React.Fragment>
             );
@@ -669,29 +678,59 @@ export default class Registration extends React.Component<IProps, IState> {
             if (this.props.mobileRegister) {
                 regDoneText = undefined;
             } else if (this.state.differentLoggedInUserId) {
-                regDoneText = (
-                    <div>
-                        <p>
-                            {_t("auth|account_clash", {
-                                newAccountId: this.state.registeredUsername,
-                                loggedInUserId: this.state.differentLoggedInUserId,
-                            })}
-                        </p>
-                        <p>
-                            <AccessibleButton
-                                kind="link_inline"
-                                onClick={async (event: ButtonEvent): Promise<void> => {
-                                    const sessionLoaded = await this.onLoginClickWithCheck(event);
-                                    if (sessionLoaded) {
-                                        dis.dispatch({ action: "view_welcome_page" });
-                                    }
-                                }}
-                            >
-                                {_t("auth|account_clash_previous_account")}
-                            </AccessibleButton>
-                        </p>
-                    </div>
-                );
+                // create temp account
+                if (this.props.showFormOnly === true) {
+                    regDoneText = (
+                        <div>
+                            <p>
+                                Tài khoản {this.state.registeredUsername} đã được tạo thành công. Bạn có thể gửi thông tin đăng nhập cho người cần sử dụng và bắt đầu trò chuyện
+                                {/* {_t("auth|account_clash", {
+                                    newAccountId: this.state.registeredUsername,
+                                    loggedInUserId: this.state.differentLoggedInUserId,
+                                })} */}
+                            </p>
+                            <p>
+                                <AccessibleButton
+                                    kind="link_inline"
+                                    onClick={async (event: ButtonEvent): Promise<void> => {
+                                        // const sessionLoaded = await this.onLoginClickWithCheck(event);
+                                        // if (sessionLoaded) {
+                                        //     dis.dispatch({ action: "view_welcome_page" });
+                                        // }
+
+                                    }}
+                                >
+                                    Đồng ý
+                                </AccessibleButton>
+                            </p>
+                        </div>
+                    );
+                }
+                else {
+                    regDoneText = (
+                        <div>
+                            <p>
+                                {_t("auth|account_clash", {
+                                    newAccountId: this.state.registeredUsername,
+                                    loggedInUserId: this.state.differentLoggedInUserId,
+                                })}
+                            </p>
+                            <p>
+                                <AccessibleButton
+                                    kind="link_inline"
+                                    onClick={async (event: ButtonEvent): Promise<void> => {
+                                        const sessionLoaded = await this.onLoginClickWithCheck(event);
+                                        if (sessionLoaded) {
+                                            dis.dispatch({ action: "view_welcome_page" });
+                                        }
+                                    }}
+                                >
+                                    {_t("auth|account_clash_previous_account")}
+                                </AccessibleButton>
+                            </p>
+                        </div>
+                    );
+                }
             } else {
                 // regardless of whether we're the client that started the registration or not, we should
                 // try our credentials anyway
@@ -721,7 +760,8 @@ export default class Registration extends React.Component<IProps, IState> {
             }
             body = (
                 <div>
-                    <h1>{_t("auth|registration_successful")}</h1>
+                    {this.props.showFormOnly === true ? (<h4>{_t("auth|registration_successful")}</h4>)
+                        : (<h1>{_t("auth|registration_successful")}</h1>)}
                     {regDoneText}
                 </div>
             );
@@ -738,7 +778,7 @@ export default class Registration extends React.Component<IProps, IState> {
             body = (
                 <Fragment>
                     <div className="mx_Register_mainContent">
-                        <AuthHeaderDisplay
+                        {this.props.showFormOnly !== true && (<AuthHeaderDisplay
                             title={_t("auth|create_account_title")}
                             serverPicker={
                                 <ServerPicker
@@ -753,13 +793,13 @@ export default class Registration extends React.Component<IProps, IState> {
                         >
                             {errorText}
                             {serverDeadSection}
-                        </AuthHeaderDisplay>
+                        </AuthHeaderDisplay>)}
                         {this.renderRegisterComponent()}
                     </div>
-                    <div className="mx_Register_footerActions">
+                    {this.props.showFormOnly !== true && (<div className="mx_Register_footerActions">
                         {goBack}
                         {signIn}
-                    </div>
+                    </div>)}
                 </Fragment>
             );
         }
@@ -770,13 +810,16 @@ export default class Registration extends React.Component<IProps, IState> {
                 </div>
             );
         }
-        return (
-            <AuthPage>
+        return (<>
+            {this.props.showFormOnly !== true ? (<AuthPage>
                 <AuthHeader />
                 <AuthHeaderProvider>
                     <AuthBody flex>{body}</AuthBody>
                 </AuthHeaderProvider>
-            </AuthPage>
-        );
+            </AuthPage>)
+                : (<>
+                    {body}
+                </>)}
+        </>);
     }
 }

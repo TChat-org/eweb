@@ -190,6 +190,7 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
 
         this.loginLogic.loginViaPassword(username, phoneCountry, phoneNumber, password).then(
             (data) => {
+                console.log("[onPasswordLogin][loginViaPassword] ok. data = ", data);
                 this.setState({ serverIsAlive: true }); // it must be, we logged in.
                 this.props.onLoggedIn(data);
             },

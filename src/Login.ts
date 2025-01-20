@@ -275,13 +275,20 @@ export async function sendLoginRequest(
         }
     }
 
+    console.log("[sendLoginRequest] ~~~ data = ", data);
+
     const creds: IMatrixClientCreds = {
         homeserverUrl: hsUrl,
         identityServerUrl: isUrl,
         userId: data.user_id,
         deviceId: data.device_id,
         accessToken: data.access_token,
+        accountType: data.account_type,
+        parentAccount: data.parent_account,
+        joinedRooms: data.joined_rooms,
     };
+
+    console.log("[sendLoginRequest] ~~~ creds = ", data);
 
     ModuleRunner.instance.extensions.cryptoSetup.examineLoginResponse(data, creds);
 

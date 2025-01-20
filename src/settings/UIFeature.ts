@@ -47,6 +47,8 @@ export enum UIComponent {
      */
     CreateSpaces = "UIComponent.spaceCreation",
 
+    CreateTempAccounts = "UIComponent.tempAccountCreation",
+
     /**
      * Components that lead to the public room directory.
      */

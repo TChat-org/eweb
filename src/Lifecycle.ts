@@ -134,7 +134,7 @@ function checkSessionLock(): void {
 }
 
 /** Error type raised by various functions in the Lifecycle workflow if session lock is stolen during execution */
-class SessionLockStolenError extends Error {}
+class SessionLockStolenError extends Error { }
 
 interface ILoadSessionOpts {
     enableGuest?: boolean;
@@ -197,6 +197,8 @@ export async function loadSession(opts: ILoadSessionOpts = {}): Promise<boolean>
                     homeserverUrl: guestHsUrl,
                     identityServerUrl: guestIsUrl,
                     guest: true,
+                    accountType: -1,
+                    parentAccount: "",
                 },
                 true,
                 false,
@@ -455,6 +457,8 @@ function registerAsGuest(hsUrl: string, isUrl?: string, defaultDeviceDisplayName
                         homeserverUrl: hsUrl,
                         identityServerUrl: isUrl,
                         guest: true,
+                        accountType: -1,
+                        parentAccount: "",
                     },
                     true,
                     true,
@@ -477,6 +481,9 @@ export interface IStoredSession {
     userId: string;
     deviceId: string;
     isGuest: boolean;
+    accountType: number;
+    parentAccount: string;
+    joinedRooms: string[];
 }
 
 /**
@@ -525,6 +532,9 @@ export async function getStoredSessionVars(): Promise<Partial<IStoredSession>> {
     const hasRefreshToken = localStorage.getItem(HAS_REFRESH_TOKEN_STORAGE_KEY) === "true" || !!refreshToken;
     const userId = localStorage.getItem("mx_user_id") ?? undefined;
     const deviceId = localStorage.getItem("mx_device_id") ?? undefined;
+    const accountType = Number(localStorage.getItem("mx_account_type")) ?? undefined;
+    const parentAccount = localStorage.getItem("mx_parent_account") ?? undefined;
+    const joinedRooms = JSON.parse(localStorage.getItem("mx_joined_rooms") || "[]");
 
     let isGuest: boolean;
     if (localStorage.getItem("mx_is_guest") !== null) {
@@ -534,7 +544,7 @@ export async function getStoredSessionVars(): Promise<Partial<IStoredSession>> {
         isGuest = localStorage.getItem("matrix-is-guest") === "true";
     }
 
-    return { hsUrl, isUrl, hasAccessToken, accessToken, refreshToken, hasRefreshToken, userId, deviceId, isGuest };
+    return { hsUrl, isUrl, hasAccessToken, accessToken, refreshToken, hasRefreshToken, userId, deviceId, isGuest, accountType, parentAccount, joinedRooms };
 }
 
 async function abortLogin(): Promise<void> {
@@ -566,7 +576,7 @@ export async function restoreSessionFromStorage(opts?: { ignoreGuest?: boolean }
         return false;
     }
 
-    const { hsUrl, isUrl, hasAccessToken, accessToken, refreshToken, userId, deviceId, isGuest } =
+    const { hsUrl, isUrl, hasAccessToken, accessToken, refreshToken, userId, deviceId, isGuest, accountType, parentAccount, joinedRooms } =
         await getStoredSessionVars();
 
     if (hasAccessToken && !accessToken) {
@@ -604,6 +614,9 @@ export async function restoreSessionFromStorage(opts?: { ignoreGuest?: boolean }
                 guest: isGuest,
                 pickleKey: pickleKey ?? undefined,
                 freshLogin: freshLogin,
+                accountType: accountType,
+                parentAccount: parentAccount,
+                joinedRooms: joinedRooms,
             },
             false,
             false,
@@ -724,15 +737,15 @@ async function doSetLoggedIn(
 
     logger.log(
         "setLoggedIn: mxid: " +
-            credentials.userId +
-            " deviceId: " +
-            credentials.deviceId +
-            " guest: " +
-            credentials.guest +
-            " hs: " +
-            credentials.homeserverUrl +
-            " softLogout: " +
-            softLogout,
+        credentials.userId +
+        " deviceId: " +
+        credentials.deviceId +
+        " guest: " +
+        credentials.guest +
+        " hs: " +
+        credentials.homeserverUrl +
+        " softLogout: " +
+        softLogout,
         " freshLogin: " + credentials.freshLogin,
     );
 
@@ -815,7 +828,7 @@ async function showStorageEvictedDialog(): Promise<boolean> {
 
 // Note: Babel 6 requires the `transform-builtin-extend` plugin for this to satisfy
 // `instanceof`. Babel 7 supports this natively in their class handling.
-class AbortLoginAndRebuildStorage extends Error {}
+class AbortLoginAndRebuildStorage extends Error { }
 
 async function persistCredentials(credentials: IMatrixClientCreds): Promise<void> {
     localStorage.setItem(HOMESERVER_URL_KEY, credentials.homeserverUrl);
@@ -824,6 +837,9 @@ async function persistCredentials(credentials: IMatrixClientCreds): Promise<void
     }
     localStorage.setItem("mx_user_id", credentials.userId);
     localStorage.setItem("mx_is_guest", JSON.stringify(credentials.guest));
+    if (credentials.accountType) localStorage.setItem("mx_account_type", JSON.stringify(credentials.accountType));
+    if (credentials.parentAccount) localStorage.setItem("mx_parent_account", credentials.parentAccount);
+    if (credentials.joinedRooms) localStorage.setItem("mx_joined_rooms", JSON.stringify(credentials.joinedRooms));
 
     await persistAccessTokenInStorage(credentials.accessToken, credentials.pickleKey);
     await persistRefreshTokenInStorage(credentials.refreshToken, credentials.pickleKey);

@@ -60,6 +60,8 @@ interface IProps {
     matrixClient: MatrixClient;
     mobileRegister?: boolean;
 
+    showFormOnly?: boolean;
+
     onRegisterClick(params: {
         username: string;
         password: string;
@@ -549,7 +551,7 @@ export default class RegistrationForm extends React.PureComponent<IProps, IState
             <input
                 className="mx_Login_submit"
                 type="submit"
-                value={_t("action|register")}
+                value={this.props.showFormOnly === true ? "Tạo tài khoản tạm thời" : _t("action|register")}
                 disabled={!this.props.canSubmit}
             />
         );

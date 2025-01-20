@@ -22,6 +22,7 @@ import { startDm } from "./dm/startDm";
 import { resolveThreePids } from "./threepids";
 
 export async function startDmOnFirstMessage(client: MatrixClient, targets: Member[]): Promise<string | null> {
+    console.log("[startDmOnFirstMessage]~~~~ called");
     let resolvedTargets = targets;
 
     try {
@@ -31,6 +32,7 @@ export async function startDmOnFirstMessage(client: MatrixClient, targets: Membe
     }
 
     const existingRoom = findDMRoom(client, resolvedTargets);
+    console.log("[startDmOnFirstMessage]~~~~ existingRoom = ", existingRoom);
 
     if (existingRoom) {
         dis.dispatch<ViewRoomPayload>({

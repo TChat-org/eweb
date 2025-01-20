@@ -52,6 +52,9 @@ export interface IMatrixClientCreds {
     guest?: boolean;
     pickleKey?: string;
     freshLogin?: boolean;
+    accountType?: number;
+    parentAccount?: string;
+    joinedRooms?: string[];
 }
 
 export interface MatrixClientPegAssignOpts {
@@ -207,7 +210,9 @@ class MatrixClientPegClass implements IMatrixClientPeg {
 
         try {
             const registrationTime = parseInt(window.localStorage.getItem("mx_registration_time")!, 10);
+            console.log("[userRegisteredWithinLastHours] ~~~ registrationTime = ", registrationTime);
             const diff = Date.now() - registrationTime;
+            console.log("[userRegisteredWithinLastHours] ~~~ diff = ", diff, " || diff / 36e5 = ", diff / 36e5, " || hours = ", hours);
             return diff / 36e5 <= hours;
         } catch {
             return false;

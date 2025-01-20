@@ -87,7 +87,7 @@ describe("Registration", function () {
         onServerConfigChange: jest.fn(),
     };
 
-    const defaultHsUrl = "https://matrix.org";
+    const defaultHsUrl = "https://a50909d5e6d67cf0ea22ace34fa813495a1db6b2cff4cc060187eabe.dyn.addr.tools";
     const defaultIsUrl = "https://c4b98ea70572b42fc4bc8c9b42acad29ee4f9d63e07ee0bbe4d9ab91.dyn.addr.tools";
 
     function getRawComponent(

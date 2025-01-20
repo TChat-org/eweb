@@ -131,6 +131,7 @@ import { ConfirmSessionLockTheftView } from "./auth/ConfirmSessionLockTheftView"
 import { LoginSplashView } from "./auth/LoginSplashView";
 import { cleanUpDraftsIfRequired } from "../../DraftCleaner";
 import { InitialCryptoSetupStore } from "../../stores/InitialCryptoSetupStore";
+import { DirectoryMember, Member, startDmOnFirstMessage } from "../../utils/direct-messages";
 
 // legacy export
 export { default as Views } from "../../Views";
@@ -213,7 +214,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
         realQueryParams: {},
         startingFragmentQueryParams: {},
         config: {},
-        onTokenLoginCompleted: (): void => {},
+        onTokenLoginCompleted: (): void => { },
     };
 
     private firstSyncComplete = false;
@@ -1268,11 +1269,11 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                 <span>
                     {isSpace
                         ? _t("leave_room_dialog|leave_space_question", {
-                              spaceName: roomToLeave?.name ?? _t("common|unnamed_space"),
-                          })
+                            spaceName: roomToLeave?.name ?? _t("common|unnamed_space"),
+                        })
                         : _t("leave_room_dialog|leave_room_question", {
-                              roomName: roomToLeave?.name ?? _t("common|unnamed_room"),
-                          })}
+                            roomName: roomToLeave?.name ?? _t("common|unnamed_room"),
+                        })}
                     {warnings}
                 </span>
             ),
@@ -1439,7 +1440,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
         );
     }
 
-    private showScreenAfterLogin(): void {
+    private async showScreenAfterLogin(): Promise<void> {
         // If screenAfterLogin is set, use that, then null it so that a second login will
         // result in view_home_page, _user_settings or _room_directory
         if (this.screenAfterLogin && this.screenAfterLogin.screen) {
@@ -1452,7 +1453,28 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
             if (MatrixClientPeg.safeGet().isGuest()) {
                 dis.dispatch({ action: "view_welcome_page" });
             } else {
-                dis.dispatch({ action: Action.ViewHomePage });
+                // if user has not joined any rooms, and is temp user, then init
+                // a session with his parent_account
+                const joinedRooms = JSON.parse(localStorage.getItem("mx_joined_rooms") || "[]");
+                const accountType = Number(localStorage.getItem("mx_account_type"));
+                const parentAccount = localStorage.getItem("mx_parent_account");
+                console.log("[showScreenAfterLogin] ~~~ joinedRooms = ", joinedRooms)
+                console.log("[showScreenAfterLogin] ~~~ accountType = ", accountType)
+                console.log("[showScreenAfterLogin] ~~~ parentAccount = ", parentAccount)
+                if (accountType === 5 && joinedRooms.length === 0 && parentAccount) {
+                    // if (true) {
+                    // const targets = this.convertFilter();
+                    let newMember = new DirectoryMember({ user_id: parentAccount })
+                    const targets: Member[] = [
+                        newMember
+                    ]
+                    console.log("[showScreenAfterLogin] ~~~~ targets = ", targets);
+                    console.log("[showScreenAfterLogin] ~~~~ calling startDmOnFirstMessage");
+                    await startDmOnFirstMessage(MatrixClientPeg.safeGet(), targets);
+                }
+                else {
+                    dis.dispatch({ action: Action.ViewHomePage });
+                }
             }
         }
     }
@@ -1505,6 +1527,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
         this.firstSyncComplete = false;
         this.firstSyncPromise = defer();
         const cli = MatrixClientPeg.safeGet();
+        console.log("[onWillStartClient]~~~~ called");
 
         // Allow the JS SDK to reap timeline events. This reduces the amount of
         // memory consumed as the JS SDK stores multiple distinct copies of room
@@ -1528,7 +1551,10 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
             return this.loggedInView.current.canResetTimelineInRoom(roomId);
         });
 
-        cli.on(ClientEvent.Sync, (state: SyncState, prevState: SyncState | null, data?: SyncStateData) => {
+        cli.on(ClientEvent.Sync, async (state: SyncState, prevState: SyncState | null, data?: SyncStateData) => {
+            console.log("[onWillStartClient] (on ClientEvent.Sync) ~~~~");
+            console.log("[onWillStartClient] (on ClientEvent.Sync) ~~~~ MatrixClientPeg.userRegisteredWithinLastHours(2400000) = ", MatrixClientPeg.userRegisteredWithinLastHours(2400000));
+
             if (state === SyncState.Error || state === SyncState.Reconnecting) {
                 this.setState({ syncError: data?.error ?? null });
             } else if (this.state.syncError) {

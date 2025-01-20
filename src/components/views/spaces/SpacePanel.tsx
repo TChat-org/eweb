@@ -67,6 +67,7 @@ import { ThreadsActivityCentre } from "./threads-activity-centre/";
 import AccessibleButton from "../elements/AccessibleButton";
 import { Landmark, LandmarkNavigation } from "../../../accessibility/LandmarkNavigation";
 import { KeyboardShortcut } from "../settings/KeyboardShortcut";
+import TempAccountCreateMenu from "../temp_accounts/TempAccountCreateMenu";
 
 const useSpaces = (): [Room[], MetaSpace[], Room[], SpaceKey] => {
     const invites = useEventEmitterState<Room[]>(SpaceStore.instance, UPDATE_INVITED_SPACES, () => {
@@ -266,6 +267,58 @@ const CreateSpaceButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed"
     );
 };
 
+
+const CreateTempAccountButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed" | "setPanelCollapsed">> = ({
+    isPanelCollapsed,
+    setPanelCollapsed,
+}) => {
+    const [menuDisplayed, handle, openMenu, closeMenu] = useContextMenu<HTMLDivElement>();
+
+    useEffect(() => {
+        if (!isPanelCollapsed && menuDisplayed) {
+            closeMenu();
+        }
+    }, [isPanelCollapsed]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    let contextMenu: JSX.Element | undefined;
+    if (menuDisplayed) {
+        contextMenu = <TempAccountCreateMenu onFinished={closeMenu} />;
+    }
+
+    const onNewClick = menuDisplayed
+        ? closeMenu
+        : () => {
+              if (!isPanelCollapsed) setPanelCollapsed(true);
+              openMenu();
+          };
+
+    return (
+        <li
+            className={classNames("mx_SpaceItem mx_SpaceItem_new", {
+                collapsed: isPanelCollapsed,
+            })}
+            role="treeitem"
+            aria-selected={false}
+        >
+            <SpaceButton
+                data-testid="create-space-button"
+                className={classNames("mx_SpaceButton_new", {
+                    mx_SpaceButton_newCancel: menuDisplayed,
+                })}
+                // label={menuDisplayed ? _t("action|cancel") : _t("create_space|label")}
+                label="Create a temp account"
+                onClick={onNewClick}
+                isNarrow={isPanelCollapsed}
+                innerRef={handle}
+                size="32px"
+            />
+
+            {contextMenu}
+        </li>
+    );
+};
+
+
 const metaSpaceComponentMap: Record<MetaSpace, typeof HomeButton> = {
     [MetaSpace.Home]: HomeButton,
     [MetaSpace.Favourites]: FavouritesButton,
@@ -341,6 +394,9 @@ const InnerSpacePanel = React.memo<IInnerSpacePanelProps>(
                 {children}
                 {shouldShowComponent(UIComponent.CreateSpaces) && (
                     <CreateSpaceButton isPanelCollapsed={isPanelCollapsed} setPanelCollapsed={setPanelCollapsed} />
+                )}
+                {shouldShowComponent(UIComponent.CreateTempAccounts) && (
+                    <CreateTempAccountButton isPanelCollapsed={isPanelCollapsed} setPanelCollapsed={setPanelCollapsed} />
                 )}
             </IndicatorScrollbar>
         );
