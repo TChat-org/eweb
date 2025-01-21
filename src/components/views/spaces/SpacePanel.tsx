@@ -238,9 +238,9 @@ const CreateSpaceButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelCollapsed"
     const onNewClick = menuDisplayed
         ? closeMenu
         : () => {
-              if (!isPanelCollapsed) setPanelCollapsed(true);
-              openMenu();
-          };
+            if (!isPanelCollapsed) setPanelCollapsed(true);
+            openMenu();
+        };
 
     return (
         <li
@@ -288,9 +288,9 @@ const CreateTempAccountButton: React.FC<Pick<IInnerSpacePanelProps, "isPanelColl
     const onNewClick = menuDisplayed
         ? closeMenu
         : () => {
-              if (!isPanelCollapsed) setPanelCollapsed(true);
-              openMenu();
-          };
+            if (!isPanelCollapsed) setPanelCollapsed(true);
+            openMenu();
+        };
 
     return (
         <li
@@ -341,6 +341,8 @@ const InnerSpacePanel = React.memo<IInnerSpacePanelProps>(
         const [invites, metaSpaces, actualSpaces, activeSpace] = useSpaces();
         const activeSpaces = activeSpace ? [activeSpace] : [];
 
+        const accountType = localStorage.getItem("mx_account_type");
+
         const metaSpacesSection = metaSpaces
             .filter((key) => !(key === MetaSpace.VideoRooms && !SettingsStore.getValue("feature_video_rooms")))
             .map((key) => {
@@ -356,8 +358,8 @@ const InnerSpacePanel = React.memo<IInnerSpacePanelProps>(
                 style={
                     isDraggingOver
                         ? {
-                              pointerEvents: "none",
-                          }
+                            pointerEvents: "none",
+                        }
                         : undefined
                 }
                 element="ul"
@@ -395,7 +397,7 @@ const InnerSpacePanel = React.memo<IInnerSpacePanelProps>(
                 {shouldShowComponent(UIComponent.CreateSpaces) && (
                     <CreateSpaceButton isPanelCollapsed={isPanelCollapsed} setPanelCollapsed={setPanelCollapsed} />
                 )}
-                {shouldShowComponent(UIComponent.CreateTempAccounts) && (
+                {shouldShowComponent(UIComponent.CreateTempAccounts) && accountType === 1 && (
                     <CreateTempAccountButton isPanelCollapsed={isPanelCollapsed} setPanelCollapsed={setPanelCollapsed} />
                 )}
             </IndicatorScrollbar>
