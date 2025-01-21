@@ -19,6 +19,7 @@ import {
     SSOFlow,
     SSOAction,
     RegisterResponse,
+    IAuthErr,
 } from "matrix-js-sdk/src/matrix";
 import React, { Fragment, ReactNode } from "react";
 import classNames from "classnames";
@@ -262,8 +263,11 @@ export default class Registration extends React.Component<IProps, IState> {
             // We do the first registration request ourselves to discover whether we need to
             // do SSO instead. If we've already started the UI Auth process though, we don't
             // need to.
-            if (!this.state.doingUIAuth) {
+            console.log("[replaceClient] ~~~~ this.state.errorText = ", this.state.errorText)
+            if (!this.state.doingUIAuth && !this.state.errorText) {
+                console.log("[replaceClient] ~~~~ calling makeRegisterRequest")
                 await this.makeRegisterRequest(null);
+                // this.makeRegisterRequest(null);
                 if (serverConfig !== this.latestServerConfig) return; // discard, serverConfig changed from under us
                 // This should never succeed since we specified no auth object.
                 logger.log("Expecting 401 from register request but got success!");
@@ -324,8 +328,9 @@ export default class Registration extends React.Component<IProps, IState> {
         if (!this.state.matrixClient) throw new Error("Matrix client has not yet been loaded");
 
         debuglog("Registration: ui authentication finished: ", { success, response });
+        console.log("~~~ Registration: ui authentication finished: ", { success, response });
+        let errorText: ReactNode = (response as Error).message || (response as Error).toString();
         if (!success) {
-            let errorText: ReactNode = (response as Error).message || (response as Error).toString();
             // can we give a better error message?
             if (response instanceof MatrixError && response.errcode === "M_RESOURCE_LIMIT_EXCEEDED") {
                 const errorTop = messageForResourceLimitError(
@@ -355,6 +360,16 @@ export default class Registration extends React.Component<IProps, IState> {
             } else if (response instanceof MatrixError && response.errcode === "M_THREEPID_IN_USE") {
                 errorText = _t("auth|3pid_in_use");
             }
+
+            this.setState({
+                busy: false,
+                doingUIAuth: false,
+                errorText,
+            });
+            return;
+        } else if ((response as IAuthErr).errcode === "M_MISSING_TOKEN") {
+            console.log("~~~ Registration: ui authentication finished: throw registration_disabled ~ ");
+            errorText = _t("auth|registration_disabled");
 
             this.setState({
                 busy: false,
@@ -485,6 +500,7 @@ export default class Registration extends React.Component<IProps, IState> {
     };
 
     private makeRegisterRequest = (auth: AuthDict | null): Promise<RegisterResponse> => {
+        // private makeRegisterRequest = async (auth: AuthDict | null): Promise<RegisterResponse> => {
         if (!this.state.matrixClient) throw new Error("Matrix client has not yet been loaded");
 
         const registerParams: IRegisterRequestParams = {
@@ -498,12 +514,24 @@ export default class Registration extends React.Component<IProps, IState> {
         };
         if (auth) registerParams.auth = auth;
         debuglog("Registration: sending registration request:", auth);
+        console.log("[makeRegisterRequest] ~~~~ Registration: sending registration request: auth = ", auth);
+        console.log("[makeRegisterRequest] ~~~~ this.state.errorCode = ", this.state.errorText);
         // return this.state.matrixClient.registerRequest(registerParams);
         if (this.props.showFormOnly === true && this.state.doingUIAuth) {
             const client = MatrixClientPeg.safeGet();
-            return client.createAccountRequest(registerParams);
+            const resp = client.createAccountRequest(registerParams);
+            console.log("[makeRegisterRequest] ~~~~ createAccountRequest returned resp = ", resp);
+            return resp;
+            // const resp = await client.createAccountRequest(registerParams);
+            // console.log("[makeRegisterRequest] ~~~~ createAccountRequest returned resp = ", resp);
+            // return resp;
         }
-        return this.state.matrixClient.registerRequest(registerParams);
+        const resp = this.state.matrixClient.registerRequest(registerParams);
+        console.log("[makeRegisterRequest] ~~~~ registerRequest returned resp = ", resp);
+        return resp;
+        // const resp = await this.state.matrixClient.registerRequest(registerParams);
+        // console.log("[makeRegisterRequest] ~~~~ registerRequest returned resp = ", resp);
+        // return resp;
     };
 
     private getUIAuthInputs(): IInputs {
@@ -541,7 +569,7 @@ export default class Registration extends React.Component<IProps, IState> {
                     sessionId={this.props.sessionId}
                     clientSecret={this.props.clientSecret}
                     emailSid={this.props.idSid}
-                    poll={true}
+                    poll={false}
                 />
             );
         } else if (!this.state.matrixClient && !this.state.busy) {

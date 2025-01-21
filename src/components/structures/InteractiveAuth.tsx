@@ -14,6 +14,7 @@ import {
     IInputs,
     InteractiveAuth,
     IStageStatus,
+    IAuthErr,
 } from "matrix-js-sdk/src/interactive-auth";
 import { MatrixClient } from "matrix-js-sdk/src/matrix";
 import { logger } from "matrix-js-sdk/src/logger";
@@ -32,7 +33,7 @@ type InteractiveAuthCallbackSuccess<T> = (
     response: T,
     extra?: { emailSid?: string; clientSecret?: string },
 ) => Promise<void>;
-type InteractiveAuthCallbackFailure = (success: false, response: IAuthData | Error) => Promise<void>;
+type InteractiveAuthCallbackFailure = (success: false, response: IAuthData | Error | IAuthErr) => Promise<void>;
 export type InteractiveAuthCallback<T> = InteractiveAuthCallbackSuccess<T> & InteractiveAuthCallbackFailure;
 
 export interface InteractiveAuthProps<T> {

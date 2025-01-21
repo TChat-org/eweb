@@ -512,21 +512,21 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
                 </div>
             );
         } else if (SettingsStore.getValue(UIFeature.Registration)) {
-            footer = (
-                <span className="mx_AuthBody_changeFlow">
-                    {_t(
-                        "auth|create_account_prompt",
-                        {},
-                        {
-                            a: (sub) => (
-                                <AccessibleButton kind="link_inline" onClick={this.onTryRegisterClick}>
-                                    {sub}
-                                </AccessibleButton>
-                            ),
-                        },
-                    )}
-                </span>
-            );
+            // footer = (
+            //     <span className="mx_AuthBody_changeFlow">
+            //         {_t(
+            //             "auth|create_account_prompt",
+            //             {},
+            //             {
+            //                 a: (sub) => (
+            //                     <AccessibleButton kind="link_inline" onClick={this.onTryRegisterClick}>
+            //                         {sub}
+            //                     </AccessibleButton>
+            //                 ),
+            //             },
+            //         )}
+            //     </span>
+            // );
         }
 
         return (
